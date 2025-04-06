@@ -1,6 +1,6 @@
 import { PageInformation } from '../model/PageInformation';
 import { BrowserService } from './BrowserService';
-import { Link, ReferrerPolicy, Rel, Target } from '../model/Link';
+import { Link, toReferrerPolicy, toRel, toTarget } from '../model/Link';
 
 export class PageAnalyzerService {
   constructor(private browserService: BrowserService) {}
@@ -34,10 +34,16 @@ export class PageAnalyzerService {
     const alternateLinks = await page.$$eval('link[rel="alternate"]', els => els.map(el => el.getAttribute('href') || '')) || [];
     const h1 = await page.$eval('h1', el => el.textContent || null).catch(() => null);
 
-    const links = await page.$$eval('a', anchors => anchors.map(anchor => ({
+    const links:{
+      href: string,
+      referrerPolicy: string,
+      rel: string,
+      target: string,
+      text: string
+    }[] = await page.$$eval('a', anchors => anchors.map(anchor => ({
       href: anchor.getAttribute('href') || '',
-      referrerPolicy: anchor.getAttribute('referrerpolicy') || 'no-referrer',
-      rel: anchor.getAttribute('rel') || '',
+      referrerPolicy: anchor.getAttribute('referrerpolicy') || null,
+      rel: (anchor.getAttribute('rel') || ''),
       target: anchor.getAttribute('target') || '_self',
       text: (anchor.textContent || '').replace(/^\s+|\s+$/g, '')
     })));
@@ -55,9 +61,9 @@ export class PageAnalyzerService {
       const linkObj = new Link(
         fullUrl,
         link.text,
-        ReferrerPolicy[link.referrerPolicy as keyof typeof ReferrerPolicy],
-        Rel[link.rel as keyof typeof Rel],
-        Target[link.target as keyof typeof Target]
+        toReferrerPolicy(link.referrerPolicy),
+        link.rel.split(' ').map(toRel).filter(x=>x!=null),
+        toTarget(link.target)
       );
 
       if (fullUrl.startsWith(url)) {
