@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model LighthouseReport {
+  id            Int      @id @default(autoincrement())
+  url           String
+  fetchedAt     DateTime @default(now())
+  raw           Json
+  performance   Float?
+  accessibility Float?
+  bestPractices Float?
+  seo           Float?
+}
+
+model Page {
+  id          Int      @id @default(autoincrement())
+  url         String   @unique
+  seoAudit    Json
+  performanceAudit Json
+  accessibilityAudit Json
+  complianceAudit Json
+  lighthouse  Lighthouse[]
+  pageInformation PageInformation?
+}
+
+model PageInformation {
+  id                    Int      @id @default(autoincrement())
+  pageId                Int     @unique
+  metaDescription       String
+  metaCanonical         String
+  ogTitle               String
+  ogDescription         String
+  ogImage               String
+  ogType                String
+  twitterCard           String
+  twitterTitle          String
+  twitterDescription    String
+  twitterImage          String
+  articlePublishedTime  String
+  articleModifiedTime   String
+  title                 String
+  iconTag               String
+  sitemapLink           String
+  alternateLinks        String[]
+  internalLinks         Json
+  externalLinks         Json
+  inSiteMap             Boolean
+  linkedFromAnotherPage Boolean
+  page                  Page     @relation(fields: [pageId], references: [id])
+}
+
+model Lighthouse {
+  id      Int    @id @default(autoincrement())
+  pageId  Int
+  result  Json
+  page    Page   @relation(fields: [pageId], references: [id])
+}

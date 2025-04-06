@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  seo-analyzer-postgres:
+    container_name: seo-analyzer-postgres
+    image: postgres:16-alpine
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "800k"
+        max-file: "1"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PWD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    env_file: .env
+    ports:
+      - "5412:5432"
+    volumes:
+      - ${SERVICE_DATA}/tmp:/tmp
+      - ${SERVICE_DATA}/db/postgres16:/var/lib/postgresql/data/
