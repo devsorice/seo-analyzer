@@ -38,20 +38,29 @@ export class PageAnalyzerService {
       href: anchor.getAttribute('href') || '',
       referrerPolicy: anchor.getAttribute('referrerpolicy') || 'no-referrer',
       rel: anchor.getAttribute('rel') || '',
-      target: anchor.getAttribute('target') || '_self'
+      target: anchor.getAttribute('target') || '_self',
+      text: (anchor.textContent || '').replace(/^\s+|\s+$/g, '')
     })));
 
     const internalLinks: Link[] = [];
     const externalLinks: Link[] = [];
 
     links.forEach(link => {
+      if (link.href.includes(':') && !link.href.startsWith('https://') && !link.href.startsWith('http://')) {
+        return;
+      }
+
+      const fullUrl = new URL(link.href, url).href;
+
       const linkObj = new Link(
-        link.href,
+        fullUrl,
+        link.text,
         ReferrerPolicy[link.referrerPolicy as keyof typeof ReferrerPolicy],
         Rel[link.rel as keyof typeof Rel],
         Target[link.target as keyof typeof Target]
       );
-      if (link.href.startsWith(url)) {
+
+      if (fullUrl.startsWith(url)) {
         internalLinks.push(linkObj);
       } else {
         externalLinks.push(linkObj);

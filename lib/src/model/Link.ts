@@ -1,6 +1,7 @@
 export class Link {
   constructor(
     public href: string,
+    public text: string,
     public referrerPolicy: ReferrerPolicy,
     public rel: Rel,
     public target: Target
@@ -12,6 +13,7 @@ export class Link {
   toDictionary(): Record<string, string> {
     return {
       href: this.href,
+      text: this.text,
       referrerPolicy: this.referrerPolicy,
       rel: this.rel,
       target: this.target
