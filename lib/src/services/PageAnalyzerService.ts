@@ -18,7 +18,11 @@ export class PageAnalyzerService {
 
     const getHref = async (selector: string): Promise<string | null> => {
       try {
-        return await page.$eval(selector, el => el.getAttribute('href') || null);
+        const val =  await page.$eval(selector, el => el.getAttribute('href') || null);
+        if (val){
+          return new URL(val, url).href;
+        }
+        return null;
       } catch {
         return null;
       }
@@ -37,8 +41,8 @@ export class PageAnalyzerService {
     const articlePublishedTime = await getValue('meta[property="article:published_time"]');
     const articleModifiedTime = await getValue('meta[property="article:modified_time"]');
     const title = await page.title() || null;
-    const iconTag = await getValue('link[rel="icon"]');
-    const sitemapLink = await getValue('link[rel="sitemap"]');
+    const iconTag = await getHref('link[rel="icon"]');
+    const sitemapLink = await getHref('link[rel="sitemap"]');
     const alternateLinks = await page.$$eval('link[rel="alternate"]', els => els.map(el => el.getAttribute('href') || '')) || [];
     const h1 = await page.$eval('h1', el => el.textContent || null).catch(() => null);
 
