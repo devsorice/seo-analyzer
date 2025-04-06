@@ -16,8 +16,16 @@ export class PageAnalyzerService {
       }
     };
 
+    const getHref = async (selector: string): Promise<string | null> => {
+      try {
+        return await page.$eval(selector, el => el.getAttribute('href') || null);
+      } catch {
+        return null;
+      }
+    };
+
     const metaDescription = await getValue('meta[name="description"]');
-    const metaCanonical = await getValue('link[rel="canonical"]');
+    const metaCanonical = await getHref('link[rel="canonical"]');
     const ogTitle = await getValue('meta[property="og:title"]');
     const ogDescription = await getValue('meta[property="og:description"]');
     const ogImage = await getValue('meta[property="og:image"]');
