@@ -38,21 +38,21 @@ model Page {
 model PageInformation {
   id                    Int      @id @default(autoincrement())
   pageId                Int     @unique
-  metaDescription       String
-  metaCanonical         String
-  ogTitle               String
-  ogDescription         String
-  ogImage               String
-  ogType                String
-  twitterCard           String
-  twitterTitle          String
-  twitterDescription    String
-  twitterImage          String
-  articlePublishedTime  String
-  articleModifiedTime   String
-  title                 String
-  iconTag               String
-  sitemapLink           String
+  metaDescription       String?
+  metaCanonical         String?
+  ogTitle               String?
+  ogDescription         String?
+  ogImage               String?
+  ogType                String?
+  twitterCard           String?
+  twitterTitle          String?
+  twitterDescription    String?
+  twitterImage          String?
+  articlePublishedTime  String?
+  articleModifiedTime   String?
+  title                 String?
+  iconTag               String?
+  sitemapLink           String?
   alternateLinks        String[]
   internalLinks         Json
   externalLinks         Json
